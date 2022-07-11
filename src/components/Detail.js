@@ -1,58 +1,54 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import db from '../firebase';
+import db from "../firebase";
 
 const Detail = () => {
   const { id } = useParams();
-  const [ movie, setMovie ] = useState([]);
+  const [movie, setMovie] = useState([]);
   useEffect(() => {
     // Grab the movie info from the DB
     db.collection("movies")
-    .doc(id)
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        setMovie(doc.data());
-      } else {
-
-      }
-    })
-  }, []);
+      .doc(id)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setMovie(doc.data());
+        } else {
+        }
+      });
+  }, [id]);
 
   return (
     <Container>
-      <Background>
-        <img
-          src={movie.backgroundImg}
-          alt="Saviour of the world"
-        />
-      </Background>
-      <ImgTitle>
-        <img src={movie.titleImg} />
-      </ImgTitle>
-      <Controls>
-        <PlayButton>
-          <img src="/images/play-icon-black.png" />
-          <span>PLAY</span>
-        </PlayButton>
-        <TrailerButton>
-          <img src="/images/play-icon-white.png" />
-          <span>Trailer</span>
-        </TrailerButton>
-        <AddButton>
-          <span>+</span>
-        </AddButton>
-        <GroupWatchButton>
-            <img src="/images/group-icon.png" />
-        </GroupWatchButton>
-      </Controls>
-      <SubTitle>
-        {movie.subTitle}
-      </SubTitle>
-      <Description>
-        {movie.description}
-      </Description>
+      {movie && (
+        <>
+          <Background>
+            <img src={movie.backgroundImg} alt="Saviour of the world" />
+          </Background>
+          <ImgTitle>
+            <img src={movie.titleImg} />
+          </ImgTitle>
+          <Controls>
+            <PlayButton>
+              <img src="/images/play-icon-black.png" />
+              <span>PLAY</span>
+            </PlayButton>
+            <TrailerButton>
+              <img src="/images/play-icon-white.png" />
+              <span>Trailer</span>
+            </TrailerButton>
+            <AddButton>
+              <span>+</span>
+            </AddButton>
+            <GroupWatchButton>
+              <img src="/images/group-icon.png" />
+            </GroupWatchButton>
+          </Controls>
+          <SubTitle>{movie.subTitle}</SubTitle>
+          <Description>{movie.description}</Description>
+        </>
+      )}
     </Container>
   );
 };
@@ -158,4 +154,4 @@ const Description = styled.div`
   margin-top: 16px;
   color: rgb(249, 249, 249);
   max-width: 760px;
-`
+`;
