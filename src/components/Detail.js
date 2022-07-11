@@ -1,17 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
+import db from '../firebase';
 
 const Detail = () => {
+  const { id } = useParams();
+  const [ movie, setMovie ] = useState([]);
+  useEffect(() => {
+    // Grab the movie info from the DB
+    db.collection("movies")
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        setMovie(doc.data());
+      } else {
+
+      }
+    })
+  }, []);
+
   return (
     <Container>
       <Background>
         <img
-          src="https://content.fortune.com/wp-content/uploads/2022/06/Elon-Musk-return-to-office-policy-GettyImages-1395059297.jpg?resize=750,500"
+          src={movie.backgroundImg}
           alt="Saviour of the world"
         />
       </Background>
       <ImgTitle>
-        <img src="/images/tesla-logo.png" />
+        <img src={movie.titleImg} />
       </ImgTitle>
       <Controls>
         <PlayButton>
@@ -30,11 +48,10 @@ const Detail = () => {
         </GroupWatchButton>
       </Controls>
       <SubTitle>
-        2023 - 92m The story of the living legend
+        {movie.subTitle}
       </SubTitle>
       <Description>
-      "There have to be reasons that you get up in the morning and you want to live. Why do you want to live? What's the point? What inspires you? What do you love about the future? If the future does not include being out there among the stars and being a multi-planet species, I find that incredibly depressing."
-― Elon Musk
+        {movie.description}
       </Description>
     </Container>
   );
