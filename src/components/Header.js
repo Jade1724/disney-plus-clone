@@ -1,25 +1,55 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { selectUserName, selectUserPhoto, setUserLogin } from "../features/user/userSlice";
+import { useHistory } from "react-router-dom";
+import {
+  selectUserName,
+  selectUserPhoto,
+  setUserLogin,
+  setSignOut,
+} from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { auth, provider } from "../firebase";
 
 const Header = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const userName = useSelector(selectUserName);
   const userPhoto = useSelector(selectUserPhoto);
+  
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        dispatch(setUserLogin({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL
+        }))
+        history.push('/');
+      }
+    })
+
+  }, []);
 
   const signIn = () => {
-    auth.signInWithPopup(provider)
-    .then((result) => {
-        let user = result.user
-      dispatch(setUserLogin({
-        name: user.displayName,
-        email: user.email,
-        photo: user.photoURL
-      }))
-    })
-  }
+    auth.signInWithPopup(provider).then((result) => {
+      let user = result.user;
+      dispatch(
+        setUserLogin({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+        })
+      );
+      history.push('/');
+    });
+  };
+
+  const signOut = () => {
+    auth.signOut().then(() => {
+      dispatch(setSignOut());
+      history.push("/login");
+    });
+  };
 
   return (
     <Nav>
@@ -56,7 +86,10 @@ const Header = () => {
               <span>SERIES</span>
             </a>
           </NavMenu>
-          <UserImg src="https://content.fortune.com/wp-content/uploads/2022/06/Elon-Musk-return-to-office-policy-GettyImages-1395059297.jpg?resize=750,500" />
+          <UserImg
+            onClick={signOut}
+            src="https://content.fortune.com/wp-content/uploads/2022/06/Elon-Musk-return-to-office-policy-GettyImages-1395059297.jpg?resize=750,500"
+          />
         </>
       )}
     </Nav>
@@ -150,5 +183,4 @@ const LoginContainer = styled.div`
   flex: 1;
   display: flex;
   justify-content: flex-end;
-
-`
+`;
