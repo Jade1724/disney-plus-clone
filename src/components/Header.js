@@ -88,7 +88,7 @@ const Header = () => {
           </NavMenu>
           <UserImg
             onClick={signOut}
-            src="https://content.fortune.com/wp-content/uploads/2022/06/Elon-Musk-return-to-office-policy-GettyImages-1395059297.jpg?resize=750,500"
+            src="/images/profile.jpg"
           />
         </>
       )}
